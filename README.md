@@ -2,16 +2,18 @@
 
 
 This project consist of two containers:
-* `sc_blog_g0`: a flask blog app built from a python docker image.
-* `mysql_sc_g0`: a mysql server instance.
+* `app_bit_wallet_g8`: a flask blog app built from a python docker image.
+* `mysql_bit_wallet_g8`: a mysql server instance.
 
-`sc_blog_g0` allows hot reloading from the host repository folder.
+`app_bit_wallet_g8` allows hot reloading from the host repository folder.
 
 ## Prerequisites
 * Install Docker CE and `docker-compose`.
 * (Optional) [Manage Docker as a non-root user](https://docs.docker.com/engine/install/linux-postinstall/).
 
 ## Running the app
+Before following the next steps you may ensure that you copy the file `.env.example` to `.env` and give values for the each environment variable.
+
 1. Create the two containers from the root directory (builds a docker image by performing every step in the Dockerfile):
     ~~~~
     > docker-compose up 
@@ -19,17 +21,17 @@ This project consist of two containers:
 
 2. Initialize the database in a different terminal:
     ~~~~
-    > docker exec sc_blog_g0 flask init-db
+    > docker exec app_bit_wallet_g8 flask init-db
     ~~~~
    
-3. Compile C++ file to validate unique blog titles
+3. Compile C++ file to validate existing addresses
     ~~~~
-    > docker exec sc_blog_g0 g++ -o sc_blog/check_title_binary -I/usr/include/mysqlcppconn -L/usr/lib/mysqlcppconn sc_blog/check_title.cpp -lmysqlcppconn
+    > docker exec app_bit_wallet_g8 g++ -o sc_blog/check_title_binary -I/usr/include/mysqlcppconn -L/usr/lib/mysqlcppconn sc_blog/check_title.cpp -lmysqlcppconn
     ~~~~
 
 4. Go to web page:
 
-    [http://localhost:5000](http://localhost:5000)
+    [http://localhost:5005](http://localhost:5005)
 
 5. When done with the web app, remove the docker containers without losing the db data (which is saved in mysql_data 
    directory).
@@ -39,9 +41,9 @@ This project consist of two containers:
 
 
 ## Testing the app
-1. Get an interactive console inside the `sc_blog_g0` container:
+1. Get an interactive console inside the `app_bit_wallet_g8` container:
     ~~~~
-    > docker exec -it sc_blog_g0 bash
+    > docker exec -it app_bit_wallet_g8 bash
     ~~~~
 2. Install the app as a python package inside the container:
     ~~~~
