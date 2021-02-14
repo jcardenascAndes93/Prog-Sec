@@ -1,0 +1,46 @@
+version: '3'
+services:
+  db:
+    image: mysql:8.0
+    container_name: mysql_bit_wallet_g8  # change 0 for your group number
+    command: --default-authentication-plugin=mysql_native_password
+    restart: always
+    volumes:
+      - ./mysql_data:/var/lib/mysql
+      - ./mysql_init:/docker-entrypoint-initdb.d
+    ports:
+      - 3308:3306
+    environment:
+      - MYSQL_ROOT_PASSWORD=${DB_ROOT_PASSWORD}
+      - MYSQL_DATABASE=${DB_NAME}
+      - MYSQL_USER=${DB_USER}
+      - MYSQL_PASSWORD=${DB_USER_PASSWORD}
+    networks:
+      - backend
+
+  web:
+    build: app/bit-wallet
+    image: app_bit_wallet_g8  # change 0 for your group number
+    container_name: app_bit_wallet_g8  # change 0 for your group number
+    restart: unless-stopped
+    ports:
+      - 5005:5000
+    volumes:
+      - ./app:/app
+    environment:
+      - MYSQL_HOST=db
+      - MYSQL_DATABASE=${DB_NAME}
+      - MYSQL_USER=${DB_USER}
+      - MYSQL_PASSWORD=${DB_USER_PASSWORD}
+      - TEST_INSTANCE_PATH=/app/tests
+      - PYTHONUNBUFFERED=1
+      - FLASK_APP=bit-wallet
+      - FLASK_ENV=development  # hot reloading
+    networks:
+      - backend
+    depends_on:
+      - db
+
+networks:
+  backend:
+    driver: bridge

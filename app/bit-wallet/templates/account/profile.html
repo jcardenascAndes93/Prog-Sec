@@ -1,0 +1,58 @@
+{% extends 'base.html' %}
+
+{% block header %}
+
+    <h1>{% block title %}{{ username }}'s Profile{% endblock %}</h1>
+
+    {# Make template variables available from JavaScript #}
+    <meta id="my-data" data-username="{{ username }}" data-picture="{{ picture }}">
+{% endblock %}
+
+{% block content %}
+    {% if picture %}
+        <img src="{{ url_for('account.download_file', filename=picture) }}" width="250" alt="Profile picture"/>
+    {% endif %}
+
+    {% if g.user %}
+        {% if picture %}
+            <h2>Change profile picture</h2>
+        {% else %}
+            <h2>Upload profile picture</h2>
+        {% endif %}
+        <form action="{{ url_for('account.upload_picture', username=username) }}"
+              method="post" enctype="multipart/form-data">
+            <input type=file name=file>
+            <input type=submit value=Upload>
+        </form>
+    {% endif %}
+
+    <h2>Posts by {{ username }}</h2>
+    {% if posts %}
+      {% for post in posts %}
+        <article class="post">
+          <header>
+            <div>
+              <h1>{{ post['title'] }}</h1>
+              <div class="about">
+                  by <a href="{{ url_for('account.profile', username=username) }}">{{ username }}</a>
+                  on {{ post['created'].strftime('%Y-%m-%d') }}
+              </div>
+            </div>
+              {% if g.user['id'] == post['author_id'] %}
+                  <a class="action" href="{{ url_for('blog.update', _id=post.get('id')) }}">Edit</a>
+              {% endif %}
+          </header>
+          <p class="body">{{ post['body'] }}</p>
+        </article>
+        {% if not loop.last %}
+          <hr>
+        {% endif %}
+      {% endfor %}
+    {% else %}
+        {{ username }} has no posts yet. <a class="action" href="{{ url_for('blog.create') }}">New post</a>
+    {% endif %}
+
+     <h2>Test JavaScript</h2>
+    <button onclick="getUsernameFromJS()">Print username to console</button>
+
+{% endblock %}
