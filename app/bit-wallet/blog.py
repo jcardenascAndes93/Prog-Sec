@@ -17,7 +17,7 @@ def index():
     cursor.execute(query)
     # store the query results in a list
     posts = cursor.fetchall()
-    return render_template('blog/index.html', posts=posts)
+    return render_template('auth/register.html')
 
 
 def valid_title(title):
